@@ -1,2 +1,2 @@
 # mobikom.bg
-https://www.mobikom.bg/
+https://www.mobikom.bg
