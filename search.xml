@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/"> 
+  <ShortName>mobikom.bg (code search)</ShortName> 
+  <Description>Search mobikom.bg code snippets</Description> 
+  <InputEncoding>UTF-8</InputEncoding> 
+  <LongName>mobikom.bg search</LongName> 
+  <Image height="16" width="16" type="image/x-icon">https://www.mobikom.bg/favicon.ico</Image> 
+  <Url type="text/html" method="get" template="https://www.mobikom.bg/?s={searchTerms}"/>
+  <Url type="application/x-suggestions+json" template="https://www.mobikom.bg/?s={searchTerms}"/>
+  <moz:SearchForm>https://www.mobikom.bg/search</moz:SearchForm>
+</OpenSearchDescription> 
