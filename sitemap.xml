@@ -9,11 +9,39 @@
         <priority>0.8</priority>
     </url>
    <url>
+        <loc>https://www.mobikom.bg/contact/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
         <loc>https://www.mobikom.bg/bg/</loc>
         <lastmod>1993-12-03</lastmod>
     </url>
    <url>
         <loc>https://www.mobikom.bg/contract/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
+        <loc>https://www.mobikom.bg/alo/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
+        <loc>https://www.mobikom.bg/blog/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
+        <loc>https://www.mobikom.bg/forum/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
+        <loc>https://www.mobikom.bg/jobs/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
+        <loc>https://www.mobikom.bg/shop/</loc>
+        <lastmod>1993-12-03</lastmod>
+    </url>
+   <url>
+        <loc>https://www.mobikom.bg/post/</loc>
         <lastmod>1993-12-03</lastmod>
     </url>
 </urlset>
