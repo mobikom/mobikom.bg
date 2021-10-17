@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <atom:link href="https://mobikom.bg/xml/feed.xml" rel="self" type="application/rss+xml" />
+    <title>Mobikom Bulgaria</title>
+    <link>https://mobikom.bg</link>
+    <description>Mobikom Bulgaria Feed</description>
+    <image>
+      <url>https://mobikom.bg/logo.jpg</url>
+      <title>Mobikom Bulgaria</title>
+      <link>https://mobikom.bg</link>
+      <description>Mobikom Bulgaria Feed</description>
+      <width>48</width>
+      <height>48</height>
+    </image>
+    <item>
+      <title>Mobikom Bulgaria Feed</title>
+      <link>https://mobikom.bg/xml/feed.xml</link>
+      <description>Mobikom Bulgaria Feed</description>
+      <guid>https://mobikom.bg/xml/</guid>
+    </item>
+    <item>
+      <title>Мобиком България разкрива как да просперираш като маркетолог</title>
+      <link>https://mobikom.bg/bg/index.html</link>
+      <description>Мобиком България разкрива как да просперираш като маркетолог в свят, в който всичко е дигитално.
+Ние сме консултантска компания, специализирана в областта на компютърните технологии и сигурност.</description>
+      <guid>https://mobikom.bg/bg/</guid>
+    </item>
+  </channel>
+</rss>
