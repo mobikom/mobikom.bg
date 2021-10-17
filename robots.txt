@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://www.mobikom.bg/sitemap.xml
+Sitemap: https://mobikom.bg/sitemap.xml
