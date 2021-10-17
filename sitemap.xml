@@ -6,63 +6,63 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml">  
    <url>
-        <loc>https://www.mobikom.bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mobikom.bg/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://www.mobikom.bg/" />
-       <xhtml:link rel="alternate" hreflang="bg" href="https://www.mobikom.bg/bg/" />
+        <loc>https://mobikom.bg/</loc>
+       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg" />
+       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg" />
+       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/bg/" />
         <lastmod>1992-12-03T18:23:17+00:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mobikom.bg/" />
-       <xhtml:link rel="alternate" hreflang="bg" href="https://www.mobikom.bg/bg/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://www.mobikom.bg/" />
+        <loc>https://mobikom.bg/bg/</loc>
+       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg" />
+       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/bg/" />
+       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg" />
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/contact/</loc>
+        <loc>https://mobikom.bg/contact/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/advertising/</loc>
+        <loc>https://mobikom.bg/advertising/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/alo/</loc>
+        <loc>https://mobikom.bg/alo/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/blog/</loc>
+        <loc>https://mobikom.bg/blog/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/contract/</loc>
+        <loc>https://mobikom.bg/contract/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/docs/</loc>
+        <loc>https://mobikom.bg/docs/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/forum/</loc>
+        <loc>https://mobikom.bg/forum/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/jobs/</loc>
+        <loc>https://mobikom.bg/jobs/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/post/</loc>
+        <loc>https://mobikom.bg/post/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/rabota/</loc>
+        <loc>https://mobikom.bg/rabota/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
    <url>
-        <loc>https://www.mobikom.bg/shop/</loc>
+        <loc>https://mobikom.bg/shop/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
 </urlset>
