@@ -1,0 +1,14 @@
+{
+  "name": "Mobikom.bg",
+  "short_name": "mobikom.bg",
+  "icons": [
+    {
+      "src": "/mobikom.jpg",
+      "sizes": "192x192",
+      "type": "image/jpg"
+    }
+  ],
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "display": "standalone"
+}
