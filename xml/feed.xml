@@ -13,6 +13,14 @@
       <width>48</width>
       <height>48</height>
     </image>
+    <image>
+      <url>https://mobikom.bg/mobikom.jpg</url>
+      <title>Mobikom Bulgaria</title>
+      <link>https://mobikom.bg</link>
+      <description>Mobikom Bulgaria Feed</description>
+      <width>48</width>
+      <height>48</height>
+    </image>
     <item>
       <title>Mobikom Bulgaria Feed</title>
       <link>https://mobikom.bg/xml/feed.xml</link>
