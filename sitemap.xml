@@ -65,4 +65,20 @@
         <loc>https://mobikom.bg/shop/</loc>
         <lastmod>1992-12-03</lastmod>
     </url>
+    <url>
+        <loc>https://mobikom.bg/stoyanov/</loc>
+       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/stoyanov/" />
+       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/stoyanov/" />
+       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/stoyanov/bg/" />
+        <lastmod>1992-12-03T18:23:17+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://mobikom.bg/stoyanov/bg/</loc>
+       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/stoyanov/bg/" />
+       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/stoyanov/bg/" />
+       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/stoyanov/" />
+        <lastmod>1992-12-03</lastmod>
+    </url>
 </urlset>
