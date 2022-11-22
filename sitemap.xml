@@ -7,18 +7,12 @@
     xmlns:xhtml="http://www.w3.org/1999/xhtml">
    <url>
         <loc>https://mobikom.bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/" />
-       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/bg/" />
         <lastmod>2022-11-22T18:23:17+00:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.5</priority>
     </url>
    <url>
         <loc>https://mobikom.bg/bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/" />
-       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/bg/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/" />
         <lastmod>2022-11-22</lastmod>
     </url>
    <url>
@@ -67,18 +61,12 @@
     </url>
     <url>
         <loc>https://mobikom.bg/stoyanov/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/stoyanov/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/stoyanov/" />
-       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/stoyanov/bg/" />
         <lastmod>2022-11-22T18:23:17+00:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://mobikom.bg/stoyanov/bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/stoyanov/bg/" />
-       <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/stoyanov/bg/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/stoyanov/" />
         <lastmod>2022-11-22</lastmod>
     </url>
 </urlset>
