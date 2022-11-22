@@ -1,76 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?>
-<urlset
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
-    http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"
-    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml">  
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    <url>
         <loc>https://mobikom.bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg" />
+       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/" />
+       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/" />
        <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/bg/" />
-        <lastmod>2002-12-03T18:23:17+00:00</lastmod>
+        <lastmod>2022-11-22T18:23:17+00:00</lastmod>
         <changefreq>daily</changefreq>
-        <priority>0.8</priority>
+        <priority>0.5</priority>
     </url>
    <url>
         <loc>https://mobikom.bg/bg/</loc>
-       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg" />
+       <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/" />
        <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/bg/" />
-       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg" />
-        <lastmod>2002-12-03</lastmod>
+       <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/" />
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/contact/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/advertising/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/alo/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/blog/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/contract/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/docs/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/forum/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/jobs/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/post/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/rabota/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
    <url>
         <loc>https://mobikom.bg/shop/</loc>
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
     <url>
         <loc>https://mobikom.bg/stoyanov/</loc>
        <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/stoyanov/" />
        <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/stoyanov/" />
        <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/stoyanov/bg/" />
-        <lastmod>2002-12-03T18:23:17+00:00</lastmod>
+        <lastmod>2022-11-22T18:23:17+00:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
@@ -79,6 +76,6 @@
        <xhtml:link rel="alternate" hreflang="x-default" href="https://mobikom.bg/stoyanov/bg/" />
        <xhtml:link rel="alternate" hreflang="bg" href="https://mobikom.bg/stoyanov/bg/" />
        <xhtml:link rel="alternate" hreflang="en" href="https://mobikom.bg/stoyanov/" />
-        <lastmod>2002-12-03</lastmod>
+        <lastmod>2022-11-22</lastmod>
     </url>
 </urlset>
