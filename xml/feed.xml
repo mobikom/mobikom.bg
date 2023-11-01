@@ -42,19 +42,25 @@
     </item>
     <item>
       <title>Mobikom Bulgaria Leadership & Governance</title>
-      <link>https://mobikom.bg/about/leadership-governance/</link>
+      <link>https://mobikom.bg/about/leadership-governance/index.html</link>
       <description>Stoyan Stoyanov is the president and CEO of the Mobikom Bulgaria. In that role, he is a participant on the board of Dobruja Media Group</description>
       <guid>https://mobikom.bg/bg/</guid>
     </item>
     <item>
       <title>Stoyan Stoyanov</title>
-      <link>https://mobikom.bg/stoyanov/</link>
+      <link>https://mobikom.bg/stoyanov/index.html</link>
       <description>Competencies, Education, Experience, Research interests</description>
       <guid>https://mobikom.bg/bg/</guid>
     </item>
     <item>
+      <title>Стоян Стоянов</title>
+      <link>https://mobikom.bg/stoyanov/bg/index.html</link>
+      <description>Компетенции, Образование, Опит, Научни интереси</description>
+      <guid>https://mobikom.bg/bg/</guid>
+    </item>
+    <item>
       <title>Мобиком България blog</title>
-      <link>https://mobikom.bg/blog/</link>
+      <link>https://mobikom.bg/blog/index.html</link>
       <description>Мобиком България разкрива как да просперираш като маркетолог</description>
       <guid>https://mobikom.bg/bg/</guid>
     </item>
