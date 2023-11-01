@@ -34,5 +34,23 @@
 Ние сме консултантска компания, специализирана в областта на компютърните технологии и сигурност.</description>
       <guid>https://mobikom.bg/bg/</guid>
     </item>
+    <item>
+      <title>Мобиком България  blog</title>
+      <link>https://mobikom.bg/blog/</link>
+      <description>Мобиком България разкрива как да просперираш като маркетолог</description>
+      <guid>https://mobikom.bg/bg/</guid>
+    </item>
+    <item>
+      <title>About the website requirements and designing</title>
+      <link>https://mobikom.bg/blog/website-requirements-designing.html</link>
+      <description>Less is more, simple is more secure.</description>
+      <guid>https://mobikom.bg/bg/</guid>
+    </item>
+    <item>
+      <title>Компютърните памети за НЕ-Специалисти</title>
+      <link>https://mobikom.bg/blog/computer-memory.html</link>
+      <description>Author: Stoyan Stoyanov for mobikom.bg/blog</description>
+      <guid>https://mobikom.bg/bg/</guid>
+    </item>
   </channel>
 </rss>
