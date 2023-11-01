@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<meta charset="UTF-8" />
+<title>title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3A7908">
+<link rel="icon" href="https://mobikom.bg/favicon.ico">
+<link href="https://mobikom.bg/apple-touch-icon.png" rel="apple-touch-icon" sizes="192x192">
+<link rel="manifest" href="https://mobikom.bg/manifest.json">
+
+<style>
+    body {
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+    }
+    
+    body > *:not(footer) {
+     margin-bottom: 40px;
+    }
+    
+    header {
+     display: flex;
+     align-items: center;
+    }
+    
+    header > hgroup > h1, header > hgroup > p {
+     margin: 20;
+     font-weight: normal;
+    }
+    
+    header > hgroup > p {
+     font-size: 16px;
+    }
+    
+    #the-standards > ul {
+     list-style-type: none;
+     margin: 0;
+     padding: 0;
+    }
+    
+    #the-standards li {
+     border: solid var(--whatwggreen) 2px;
+     border-radius: 7px;
+     letter-spacing: 0.25px;
+     font-weight: bold;
+     background-color: white;
+    }
+    
+    #the-standards li:not(:last-of-type) {
+     margin-bottom: 15px;
+    }
+    
+    #the-standards a {
+     color: var(--whatwggreen);
+     text-decoration: none;
+     padding: 4px 30px;
+     height: 64px;
+     display: flex;
+     align-items: center;
+    }
+    
+    #the-standards a:hover, #the-standards a:focus {
+      transition: 0.2s;
+      padding-left: 50px;
+    }
+    
+    #the-standards a::before {
+     display: inline-block;
+     width: 27px;
+     height: 15.4px;
+     background: url(/img/arrow.svg);
+     content: "";
+     margin-right: 21px;
+     vertical-align: middle;
+     background-repeat: no-repeat;
+    }
+    
+    #links-with-explanations {
+     /* Grow into the extra space before the footer to make the footer stick to the bottom. */
+     flex: 1;
+    }
+    
+    #links-with-explanations a {
+     padding: 0 10px;
+     display: flex;
+     flex-wrap: wrap;
+     margin-bottom: 15px;
+     background-color: #333;
+     align-items: center;
+     justify-content: space-between;
+     border-radius: 4px;
+     color: white;
+     min-height: 54px;
+     text-decoration: none;
+    }
+    
+    #links-with-explanations a:hover, #links-with-explanations a:focus {
+      transition: .2s;
+      background-color: black;
+    }
+    
+    #links-with-explanations a::before {
+     display: inline-block;
+     width: 30px;
+     height: 30px;
+     content: "";
+     margin: 12px 20px 12px 8px;
+     vertical-align: middle;
+     background-repeat: no-repeat;
+    }
+    
+    #participate::before {
+     background: url(/img/participate.svg);
+    }
+    
+    #chat::before {
+     background: url(/img/chat.svg);
+    }
+    
+    #twitter::before {
+     background: url(/img/bird-webpage.svg);
+    }
+    
+    #checker::before {
+     background: url(/img/checker.svg);
+    }
+    
+    #links-with-explanations a > strong {
+     margin-right: auto;
+    }
+    
+    #links-with-explanations a > p {
+     margin-left: auto;
+     padding-right: 8px;
+    }
+    
+    @media (max-width: 600px) {
+      #links-with-explanations a > p {
+        width: 100%;
+        padding-left: 12px;
+      }
+    }
+    </style>
+
+<header>
+    <a href="/" title="Mobikom" itemprop="url"><img alt="Mobikom" id="main-logo" src="https://mobikom.bg/mobikom.jpg" width="192" height="192" title="Mobikom Bulgaria"></a>
+    <hgroup>
+     <h1>Welcome to the mobikom.bg community</h1>
+     <p>Maintaining and evolving since 2023</p>
+    </hgroup>
+   </header>
+   
+   <div id="the-standards">
+    <ul>
+     <li><a href="https://mobikom.bg/multipage/">Read the HTML Living Standard</a></li>
+     <li><a href="https://mobikom.bg/">See the other mobikom.bg</a></li>
+    </ul>
+   </div>
+   
+   <div class="buttonish-links">
+    <a href="/blog/">Blog</a>
+    <a href="/faq/">FAQ</a>
+    <!--<a href="https://github.com/mobikom">GitHub</a>-->
+    <a href="/policies/">Policies</a>
+    <a class="p-note" href="/terms/" title="Общи условия" itemprop="url">Terms of Service</a>
+   </div>
+   
+   <div id="links-with-explanations">
+    <a href="https://mobikom.bg/" id="participate">
+     <strong>Participate</strong>
+     <p>Get started with contributing to the mobikom</p>
+    </a>
+    <a href="/chat" id="chat">
+     <strong>Chat</strong>
+     <p>Talk to other members of the mobikom community</p>
+    </a>
+    <!--<a href="https://twitter.com/WHATWG" id="twitter">-->
+     <strong>Twitter</strong>
+     <p>Keep track of spec changes and other announcements</p>
+    </a>
+    <!--<a href="https://whatwg.org/validator/" id="checker">-->
+     <strong>HTML checker</strong>
+     <p>Validate your HTML documents</p>
+    </a>
+   </div>
+   
+   <footer>
+    <address>Queries can be directed either as a
+    <!-- <a href="https://github.com/mobikom/meta/issues/new">new meta issue</a> or--> as an email to the
+     <a href="mailto:sg@mobikom.bg">Steering Group</a>.
+    </address>
+   
+    <p><small>Copyright ©  <time datetime="2023-10-31T10:00:00">2023</time> <strong>Mobikom Bulgaria</strong>. This work is licensed under a <!--<a rel="license" href="https://creativecommons.org/licenses/by/4.0/">-->Creative Commons Attribution 4.0 International License.</small></p>
+   </footer>
+   
+   <script>
+   "use strict";
+   navigator.serviceWorker.register("/service-worker.js");
+   </script>
