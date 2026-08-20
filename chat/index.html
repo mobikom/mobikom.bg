@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobikom P2P Фиксирана Мрежа</title>
-    <!-- Външна P2P библиотека -->
     <script src="https://unpkg.com"></script>
     <style>
         :root { --mobikom-orange: #ff6600; --mobikom-grey: #2e3131; --bg: #f5f7fa; --card: #ffffff; --text: #050505; }
@@ -35,12 +34,12 @@
         .btn-clear { background: #ef4444; }
         .video-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; background: #23272a; position: relative; }
         video { width: 100%; height: 140px; border-radius: 8px; background: #000; object-fit: cover; }
-        .btn-hangup { position: absolute; bottom: 15px; left: 50%; transform: translateX-%50; background: #ef4444; color: white; border: none; padding: 5px 15px; border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-hangup { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; border: none; padding: 5px 15px; border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .progress-bar { width: 100%; background: #e0e0e0; border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--mobikom-orange); width: 0%; }
 
-        /* 🔒 ПРЕДПАЗЕН ЕКРАН - СЕГА Е ЕДНОЛИЧНО ВИДИМ ПО ПОДРАЗБИРАНЕ НА CSS НИВО */
-        .pin-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--mobikom-grey); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; gap: 15px; }
+        /* 🔒 Екран за ПИН код - Видим по подразбиране */
+        .pin-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--mobikom-grey); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; gap: 15px; }
         .pin-input { width: 120px; text-align: center; letter-spacing: 5px; font-size: 20px; border-radius: 8px !important; border: 2px solid var(--mobikom-orange) !important; background: #1a1c1c; color: white; }
         .pin-overlay p { margin: 0; font-size: 14px; font-weight: bold; letter-spacing: 0.5px; }
     </style>
@@ -48,12 +47,12 @@
 <body>
 
 <div class="chat-card">
-    <!-- Този блок стои най-отгоре хардуерно -->
+    <!-- Блокът за сигурност е напълно независим -->
     <div class="pin-overlay" id="pinOverlay">
         <div class="brand-dot" style="width: 25px; height: 25px;"></div>
         <p id="pinTitle">ВЪВЕДЕТЕ ПИН КОД ЗА ДОСТЪП</p>
         <input type="password" id="pinField" class="pin-input" maxlength="4" placeholder="••••" autocomplete="off">
-        <button id="pinSubmitBtn">Вход в мрежата</button>
+        <button onclick="checkPIN()">Вход в мрежата</button>
     </div>
 
     <div class="chat-header">
@@ -64,17 +63,17 @@
     <div class="setup-area">
         <div><strong>Абонат ID:</strong> <span id="my-id" style="color:var(--mobikom-orange); font-weight:bold;">...</span></div>
         <div style="display:flex; gap:4px;">
-            <button class="btn-action" id="audioBtn">📞</button>
-            <button class="btn-action" id="videoBtn">📹</button>
-            <button class="btn-action btn-clear" id="clearBtn">🗑️</button>
-            <button class="btn-action" id="inviteBtn" disabled>🔗 Покана</button>
+            <button class="btn-action" onclick="startCall(false)">📞</button>
+            <button class="btn-action" onclick="startCall(true)">📹</button>
+            <button class="btn-action btn-clear" onclick="clearLocalHistory()">🗑️</button>
+            <button class="btn-action" id="inviteBtn" onclick="copyInviteLink()" disabled>🔗 Покана</button>
         </div>
     </div>
 
     <div class="video-container" id="videoContainer">
         <video id="localVideo" autoplay muted playsinline></video>
         <video id="remoteVideo" autoplay playsinline></video>
-        <button class="btn-hangup" id="hangupBtn">Затвори</button>
+        <button class="btn-hangup" onclick="hangUp()">Затвори</button>
     </div>
 
     <div class="chat-box" id="chatBox"></div>
@@ -84,43 +83,42 @@
     </div>
     
     <div class="emoji-panel" id="emojiPanel">
-        <div class="emoji-item">😀</div><div class="emoji-item">😂</div>
-        <div class="emoji-item">😊</div><div class="emoji-item">👍</div>
-        <div class="emoji-item">❤️</div><div class="emoji-item">🔥</div>
-        <div class="emoji-item">🎉</div><div class="emoji-item">🚀</div>
-        <div class="emoji-item">🤔</div><div class="emoji-item">😉</div>
+        <div class="emoji-item" onclick="insertEmoji('😀')">😀</div><div class="emoji-item" onclick="insertEmoji('😂')">😂</div>
+        <div class="emoji-item" onclick="insertEmoji('😊')">😊</div><div class="emoji-item" onclick="insertEmoji('👍')">👍</div>
+        <div class="emoji-item" onclick="insertEmoji('❤️')">❤️</div><div class="emoji-item" onclick="insertEmoji('🔥')">🔥</div>
+        <div class="emoji-item" onclick="insertEmoji('🎉')">🎉</div><div class="emoji-item" onclick="insertEmoji('🚀')">🚀</div>
+        <div class="emoji-item" onclick="insertEmoji('🤔')">🤔</div><div class="emoji-item" onclick="insertEmoji('😉')">😉</div>
     </div>
     
     <div class="input-container">
-        <input type="file" id="fileInput" style="display: none;">
+        <input type="file" id="fileInput" style="display: none;" onchange="prepareFileToSend()">
         <label for="fileInput" class="icon-btn">📎</label>
-        <div class="icon-btn" id="emojiToggleBtn">😊</div>
+        <div class="icon-btn" onclick="toggleEmojiPanel()">😊</div>
         <input type="text" id="messageInput" placeholder="Напишете съобщение..." disabled>
-        <button id="sendBtn" disabled>Прати</button>
+        <button id="sendBtn" onclick="sendMessage()" disabled>Прати</button>
     </div>
 </div>
 
 <script>
-    // Изчакваме пълното зареждане на страницата на ниско ниво
-    document.addEventListener("DOMContentLoaded", () => {
-        const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
-        let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null;
+    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
+    let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null;
 
-        const UI = {
-            box: document.getElementById('chatBox'), status: document.getElementById('status'),
-            id: document.getElementById('my-id'), msgInput: document.getElementById('messageInput'),
-            send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
-            invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
-            localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
-            prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
-            emojiPanel: document.getElementById('emojiPanel'), pinOverlay: document.getElementById('pinOverlay'), pinField: document.getElementById('pinField'), pinTitle: document.getElementById('pinTitle'),
-            pinSubmit: document.getElementById('pinSubmitBtn'), emojiToggle: document.getElementById('emojiToggleBtn'), clear: document.getElementById('clearBtn'),
-            audio: document.getElementById('audioBtn'), video: document.getElementById('videoBtn'), hangup: document.getElementById('hangupBtn')
-        };
+    const UI = {
+        box: document.getElementById('chatBox'), status: document.getElementById('status'),
+        id: document.getElementById('my-id'), msgInput: document.getElementById('messageInput'),
+        send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
+        invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
+        localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
+        prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
+        emojiPanel: document.getElementById('emojiPanel'), pinOverlay: document.getElementById('pinOverlay'), pinField: document.getElementById('pinField'), pinTitle: document.getElementById('pinTitle')
+    };
 
-        const savedPIN = localStorage.getItem('mobikom_chat_pin');
-        if (!savedPIN) UI.pinTitle.innerText = "СЪЗДАЙТЕ НОВ 4-ЦИФРЕН ПИН КОД";
+    // 🔒 ФАЗА 1: Незабавна проверка на ПИН кода (Чист синхронен код, защитен от блокиране)
+    const savedPIN = localStorage.getItem('mobikom_chat_pin');
+    if (!savedPIN) UI.pinTitle.innerText = "СЪЗДАЙТЕ НОВ 4-ЦИФРЕН ПИН КОД";
 
-        UI.pinSubmit.onclick = () => {
-            const inputPIN = UI.pinField.value.trim();
-            if (inputPIN.length !== 4 || isNaN(inputPIN)) { alert("ПИН трябва да е точно 4 цифри!"); return; }
+    function checkPIN() {
+        const inputPIN = UI.pinField.value.trim();
+        if (inputPIN.length !== 4 || isNaN(inputPIN)) { alert("ПИН кодът трябва да съдържа точно 4 цифри!"); return; }
+
+        if (!savedPIN) {
