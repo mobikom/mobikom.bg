@@ -50,7 +50,7 @@
 <div class="chat-card">
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
-        <span style="font-size: 11px; background: #ff6600; color: white; padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
+        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● Локална линия</span>
     </div>
     
     <div class="setup-area">
@@ -58,7 +58,7 @@
             <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име за чата">
             <button class="btn-action" id="audioCallBtn" title="Започване на аудио разговор">📞</button>
             <button class="btn-action" id="videoCallBtn" title="Започване на видео разговор">🎥</button>
-            <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията от екрана и RAM паметта">🗑️</button>
+            <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията">🗑️</button>
             <button class="btn-action" id="inviteBtn" title="Копиране на линка за сигурна P2P връзка">🔗 Покана</button>
         </div>
         <div class="setup-row" id="codeRow">
@@ -70,7 +70,7 @@
     <div class="video-container" id="videoContainer">
         <video id="localVideo" autoplay muted playsinline></video>
         <video id="remoteVideo" autoplay playsinline></video>
-        <button class="btn-hangup" id="hangUpCallBtn" title="Прекъсване на текущото повикване">Затвори</button>
+        <button class="btn-hangup" id="hangUpCallBtn" title="Прекъсване на повикването">Затвори</button>
     </div>
 
     <div class="chat-box" id="chatBox"></div>
@@ -89,10 +89,10 @@
     
     <div class="input-container">
         <input type="file" id="fileInput" style="display: none;">
-        <label for="fileInput" class="icon-btn" title="Прикачване и изпращане на файл (макс. 15 MB)">📎</label>
-        <div class="icon-btn" id="emojiToggleBtn" title="Оваряне на панела с емотикони">😊</div>
-        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва автоматично след свързване">
-        <button id="sendBtn" disabled title="Изпращане на съобщението">Прати</button>
+        <label for="fileInput" class="icon-btn" title="Изпращане на файл (макс. 15 MB)">📎</label>
+        <div class="icon-btn" id="emojiToggleBtn" title="Емотикони">😊</div>
+        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва след свързване">
+        <button id="sendBtn" disabled title="Изпращане">Прати</button>
     </div>
 </div>
 
