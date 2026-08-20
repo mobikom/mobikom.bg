@@ -11,7 +11,7 @@
         .chat-card { width: 100%; max-width: 440px; height: 100%; max-height: 700px; background: var(--card); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; position: relative; border: 2px solid var(--mobikom-grey); }
         @media (max-width: 480px) { .chat-card { max-width: 100%; max-height: 100%; border: none; border-radius: 0; } }
         .chat-header { background: var(--mobikom-grey); color: white; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); flex-shrink: 0; }
-        .brand-title { font-size: 15px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; }
+        .brand-title { font-size: 14px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; color: #00ff33; font-family: monospace; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
         .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
         .setup-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px; }
@@ -33,8 +33,6 @@
         .btn-action { background: var(--mobikom-grey); font-size: 11px; padding: 5px 12px; border-radius: 24px; font-weight: bold; color: white; border: none; cursor: pointer; }
         .btn-action:hover { background: var(--mobikom-orange); }
         .btn-clear { background: #ef4444; border-radius: 50%; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-        
-        /* 🎥 Видео контейнер за гласово и видео повикване по IP */
         .video-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; background: #23272a; position: relative; flex-shrink: 0; }
         video { width: 100%; height: 110px; border-radius: 8px; background: #000; object-fit: cover; }
         .btn-hangup { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
@@ -44,22 +42,20 @@
 
 <div class="chat-card">
     <div class="chat-header">
-        <div class="brand-title" id="myIpHeader"><div class="brand-dot"></div> LAN IP Мост</div>
-        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● Изчакване</span>
+        <div class="brand-title" id="myIpHeader">Локален адрес: извличане...</div>
+        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● Онлайн</span>
     </div>
     
     <div class="setup-area" id="signalingArea">
         <div class="setup-row">
             <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име">
-            <!-- 🟢 Директно поле за избор на IP адреса на устройството, на което искате да ПОЗВЪНИТЕ -->
-            <input type="text" id="targetIpField" class="input-ip" placeholder="Въведете IP на отсрещния..." autocomplete="off">
+            <input type="text" id="targetIpField" class="input-ip" placeholder="Въведете IP на другия..." autocomplete="off">
             <button class="btn-action" id="audioCallBtn" title="Повикване по IP (Аудио)">📞</button>
             <button class="btn-action" id="videoCallBtn" title="Повикване по IP (Видео)">🎥</button>
             <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията">🗑️</button>
         </div>
     </div>
 
-    <!-- Контейнер за възпроизвеждане на видеокамерите при активен разговор -->
     <div class="video-container" id="videoContainer">
         <video id="localVideo" autoplay muted playsinline></video>
         <video id="remoteVideo" autoplay playsinline></video>
@@ -80,14 +76,14 @@
         <input type="file" id="fileInput" style="display: none;">
         <label for="fileInput" class="icon-btn" title="Изпращане на файл (макс. 15 MB)">📎</label>
         <div class="icon-btn" id="emojiToggleBtn" title="Емотикони">😊</div>
-        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва след приемане на повикването">
+        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва автоматично след свързване">
         <button id="sendBtn" disabled title="Изпращане">Прати</button>
     </div>
 </div>
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
-    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null;
+    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, wsSignaling = null;
     let targetIpAddress = "", myIpAddress = "";
 
     const UI = {
@@ -102,13 +98,19 @@
         myIpHeader: document.getElementById('myIpHeader')
     };
 
-    // 🔒 Нативна криптография
     async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
     async function encryptData(d) { if(!cryptoKey) cryptoKey = await generateAESKey(); const iv = window.crypto.getRandomValues(new Uint8Array(12)), enc = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, cryptoKey, new TextEncoder().encode(JSON.stringify(d))); return { ct: btoa(String.fromCharCode(...new Uint8Array(enc))), iv: btoa(String.fromCharCode(...iv)) }; }
     async function decryptData(o) { const iv = new Uint8Array(atob(o.iv).split("").map(c => c.charCodeAt(0))), ct = new Uint8Array(atob(o.ct).split("").map(c => c.charCodeAt(0))); return JSON.parse(new TextDecoder().decode(await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, cryptoKey, ct))); }
 
-    // 🌐 Автоматично засичане на локалното IP на вашата LAN карта
-    function discoverMyLocalIp() {
-        const tempPeer = new RTCPeerConnection({ iceServers: [] });
-        tempPeer.createDataChannel("");
-        tempPeer.createOffer().then(offer => tempPeer.setLocalDescription(offer));
+    // 🌐 Извличане на локалното IP без mDNS филтри
+    function discoverMyIp() {
+        const pc = new RTCPeerConnection({ iceServers: [] });
+        pc.createDataChannel("");
+        pc.createOffer().then(o => pc.setLocalDescription(o));
+        pc.onicecandidate = (e) => {
+            if (!e || !e.candidate) return;
+            const parts = e.candidate.candidate.split(" ");
+            const ip = parts[4];
+            if (ip && ip.includes(".")) {
+                myIpAddress = ip;
+                UI.myIpHeader.innerText = `Моето IP: ${myIpAddress}`;
