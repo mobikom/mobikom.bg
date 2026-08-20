@@ -50,7 +50,7 @@
 <div class="chat-card">
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
-        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● Локална линия</span>
+        <span style="font-size: 11px; background: #ff6600; color: white; padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
     </div>
     
     <div class="setup-area">
@@ -98,8 +98,8 @@
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg/chat/";
-    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, base64KeyString = "", finalInviteUrl = "";
-    let receivedChunks = {}, incomingFileInfo = null;
+    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, base64KeyString = "";
+    let receivedChunks = {}, incomingFileInfo = null, hashData = "";
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
