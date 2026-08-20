@@ -50,7 +50,6 @@
     </div>
     
     <div class="setup-area">
-        <!-- Поле за избор на име на абоната -->
         <div><input type="text" id="usernameField" class="input-name" placeholder="Вашето име..." value="Абонат"></div>
         <div style="display:flex; gap:4px;">
             <button class="btn-action" onclick="startCall(false)">📞</button>
@@ -91,7 +90,7 @@
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
-    let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null;
+    let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null, base64KeyString = "";
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
@@ -117,11 +116,15 @@
         if (typeof Peer === 'undefined') { alert("Грешка при зареждане на мрежата!"); return; }
 
         const target = urlParams.get('join'), keyHash = window.location.hash.substring(1);
-        try { cryptoKey = (target && keyHash) ? await importKeyBase64(keyHash) : await generateAESKey(); } catch(e) { cryptoKey = await generateAESKey(); }
+        try { 
+            cryptoKey = (target && keyHash) ? await importKeyBase64(keyHash) : await generateAESKey(); 
+            // Експортираме ключа предварително, за да е готов за бутона веднага
+            base64KeyString = await exportKeyBase64(cryptoKey);
+        } catch(e) { 
+            cryptoKey = await generateAESKey(); 
+            base64KeyString = await exportKeyBase64(cryptoKey);
+        }
 
         peer = androidId ? new Peer(androidId, { config: { iceServers: [{ urls: 'stun:://google.com' }] } }) : new Peer({ config: { iceServers: [{ urls: 'stun:://google.com' }] } });
 
         peer.on('open', (id) => {
-            myPeerId = id; UI.status.innerText = '● Готов'; UI.invite.disabled = false;
-            if (target && keyHash) { UI.status.innerText = 'Дешифриране...'; conn = peer.connect(target); setupChat(); }
-        });
