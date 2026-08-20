@@ -13,7 +13,7 @@
         .chat-header { background: var(--mobikom-grey); color: white; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); flex-shrink: 0; }
         .brand-title { font-size: 16px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
-        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-shrink: 0; }
         .setup-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 10px 14px; border-radius: 14px; max-width: 80%; word-wrap: break-word; font-size: 14px; display: flex; flex-direction: column; position: relative; }
@@ -88,7 +88,7 @@
     </div>
     
     <div class="input-container">
-        <input type="file" id="fileInput" style="display: none;">
+        <input type="file" id="fileInput" style="display: none;" onchange="prepareFileToSend()">
         <label for="fileInput" class="icon-btn" title="Прикачване и изпращане на файл (макс. 15 MB)">📎</label>
         <div class="icon-btn" id="emojiToggleBtn" title="Оваряне на панела с емотикони">😊</div>
         <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва автоматично след свързване">
@@ -99,7 +99,7 @@
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg/chat/";
     let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, base64KeyString = "";
-    let receivedChunks = {}, incomingFileInfo = null;
+    let receivedChunks = {}, incomingFileInfo = null, finalInviteUrl = "";
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
@@ -110,4 +110,3 @@
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
         emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
         audioCall: document.getElementById('audioCallBtn'), videoCall: document.getElementById('videoCallBtn'),
-        clearHistory: document.getElementById('clearHistoryBtn'), hangUpCall: document.getElementById('hangUpCallBtn'),
