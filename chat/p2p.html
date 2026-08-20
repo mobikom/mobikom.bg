@@ -31,8 +31,7 @@
         .input-name { width: 85px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
         .input-pin { width: 110px; font-size: 14px; font-weight: bold; text-align: center; letter-spacing: 1px; padding: 6px; border-radius: 24px; border: 1px solid #ccc; background: white; outline: none; }
         
-        /* 📱 Информационна кутия за извеждане на PIN кода */
-        .visible-pin-box { width: 100%; display: none; background: #2e3131; color: #00ff33; font-family: monospace; font-size: 15px; font-weight: bold; text-align: center; padding: 10px; border-radius: 6px; border: 2px solid var(--mobikom-orange); margin-top: 2px; }
+        .visible-pin-box { width: 100%; background: #2e3131; color: #00ff33; font-family: monospace; font-size: 14px; font-weight: bold; text-align: center; padding: 10px; border-radius: 6px; border: 2px solid var(--mobikom-orange); margin-top: 2px; }
         
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 18px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 14px; flex-shrink: 0; }
         button:hover { background: var(--mobikom-orange); }
@@ -57,15 +56,14 @@
     <div class="setup-area">
         <div class="setup-row">
             <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име">
-            <button class="btn-action" id="inviteBtn" title="Генериране на 4-цифрен LAN PIN код">🔗 Покана</button>
             <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията">🗑️</button>
         </div>
         
-        <!-- 🟢 Кутия за показване на краткия PIN код директно на екрана -->
-        <div class="visible-pin-box" id="outputPinArea"></div>
+        <!-- 🟢 Бутонът за покана е премахнат, а ПИН кодът е фиксиран софтуерно -->
+        <div class="visible-pin-box" id="outputPinArea">ФИКСИРАН ПИН КОД: 5291</div>
 
         <div class="setup-row" id="codeRow">
-            <input type="text" id="exchangePinField" class="input-pin" placeholder="Въведете PIN..." autocomplete="off" maxlength="4">
+            <input type="text" id="exchangePinField" class="input-pin" placeholder="Въведете 5291..." autocomplete="off" maxlength="4">
             <button class="btn-action" id="connectBtn" style="flex:1;">Свържи</button>
         </div>
     </div>
@@ -94,8 +92,8 @@
 </div>
 
 <script>
-    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
-    let rtcPeer = null, dataChannel = null, cryptoKey = null, generatedPinCode = "";
+    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, FIXED_PIN = "5291";
+    let rtcPeer = null, dataChannel = null, cryptoKey = null;
     let receivedChunks = {}, incomingFileInfo = null;
 
     const UI = {
@@ -105,9 +103,10 @@
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
         emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
         clearHistory: document.getElementById('clearHistoryBtn'), pinField: document.getElementById('exchangePinField'), 
-        connectBtn: document.getElementById('connectBtn'), codeRow: document.getElementById('codeRow'), outputPin: document.getElementById('outputPinArea'), invite: document.getElementById('inviteBtn')
+        connectBtn: document.getElementById('connectBtn'), codeRow: document.getElementById('codeRow')
     };
 
     // 🔒 Нативна криптография
     async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
-    async function encryptData(d) { const iv = window.crypto.getRandomValues(new Uint8Array(12)), enc = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, cryptoKey, new TextEncoder().encode(JSON.stringify(d))); return { ct: btoa(String.fromCharCode(...new Uint8Array(enc))), iv: btoa(String.fromCharCode(...iv)) }; }
+    async function encryptData(d) { if(!cryptoKey) cryptoKey = await generateAESKey(); const iv = window.crypto.getRandomValues(new Uint8Array(12)), enc = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, cryptoKey, new TextEncoder().encode(JSON.stringify(d))); return { ct: btoa(String.fromCharCode(...new Uint8Array(enc))), iv: btoa(String.fromCharCode(...iv)) }; }
+    async function decryptData(o) { const iv = new Uint8Array(atob(o.iv).split("").map(c => c.charCodeAt(0))), ct = new Uint8Array(atob(o.ct).split("").map(c => c.charCodeAt(0))); return JSON.parse(new TextDecoder().decode(await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, cryptoKey, ct))); }
