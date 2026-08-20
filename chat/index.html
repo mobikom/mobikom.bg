@@ -89,21 +89,27 @@
     </div>
 </div>
 
-<!-- 📦 ОФИЦИАЛЕН ВГРАДЕН МИНИФИЦИРАН PEERJS ЕНДЖИН (АБСОЛЮТНО АВТОНОМЕН) -->
 <script>
-    !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e= "undefined"!=typeof globalThis?globalThis:e||self).peerjs={})}(this,(function(e){"use strict";var t=function(e,t){return t={exports:{}},e(t,t.exports),t.exports}((function(e,t){var n;
-    // Спестени са коментарите. Пълната логика на библиотеката PeerJS 1.5.4 е компресирана тук локално:
-    !function(){var r={262:function(e,t,r){var i=r(962),o=r(434);e.exports=function(e,t){var r=o(e,t);return i(r)?r:void 0}},434:function(e){e.exports=function(e,t){return null==e?void 0:e[t]}},962:function(e){e.exports=function(e){return"function"==typeof e}},100:function(e,t,r){var i=r(262)(window,"WebSocket");e.exports=i}};
-    var i=window.RTCPeerConnection||window.mozRTCPeerConnection||window.webkitRTCPeerConnection;
-    window.Peer=function(){function e(t,n){if(!(this instanceof e))return new e(t,n);this.options=n||{},this.id=t,this._initialize()}return e.prototype._initialize=function(){var e=this;this.connections={},this.disconnected=!1,this.destroyed=!1,setTimeout((function(){e.UI_init()}),10)},e.prototype.UI_init=function(){this.emit("open",this.id)},e.prototype.connect=function(e,t){var n=this;return{on:function(e,t){if("open"===e)setTimeout((function(){t()}),50)},send:function(e){console.log("Директен P2P трафик:",e)}}},e.prototype.emit=function(e,t){if(this._events&&this._events[e])this._events[e](t)},e.prototype.on=function(e,t){this._events=this._events||{},this._events[e]=t},e}();
-    // Край на ядрото на WebRTC адаптера
-    }());
-}));
-</script>
-
-<script>
-    // ⚙️ Основна Логика на Приложението (Вашата пречистена и работеща архитектура)
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
-    let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null, base64KeyString = "";
+    let rtcPeer = null, dataChannel = null, localStream = null, currentCall = null, cryptoKey = null, wsSignaling = null;
+    let myId = "", targetId = "", base64KeyString = "", receivedChunks = {}, incomingFileInfo = null;
 
     const UI = {
+        box: document.getElementById('chatBox'), status: document.getElementById('status'),
+        msgInput: document.getElementById('messageInput'), nameInput: document.getElementById('usernameField'),
+        send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
+        invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
+        localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
+        prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
+        emojiPanel: document.getElementById('emojiPanel')
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    myId = urlParams.get('android_id') || Math.random().toString(36).substring(2, 10);
+    targetId = urlParams.get('join');
+    const keyHash = window.location.hash.substring(1);
+
+    // 🔒 1. Абсолютно чист Web Crypto API
+    async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
+    async function exportKeyBase64(key) { return btoa(String.fromCharCode(...new Uint8Array(await window.crypto.subtle.exportKey("raw", key)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    async function importKeyBase64(s) { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/')), bytes = new Uint8Array(b.length).map((_, i) => b.charCodeAt(i)); return await window.crypto.subtle.importKey("raw", bytes, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]); }
