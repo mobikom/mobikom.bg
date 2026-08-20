@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-    <meta charset="UTF-8"> 
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Mobikom P2P Фиксирана Мрежа</title>
     <style>
@@ -13,7 +13,8 @@
         .chat-header { background: var(--mobikom-grey); color: white; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); flex-shrink: 0; }
         .brand-title { font-size: 16px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
-        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-shrink: 0; }
+        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .setup-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 10px 14px; border-radius: 14px; max-width: 80%; word-wrap: break-word; font-size: 14px; display: flex; flex-direction: column; position: relative; }
         .me { background: var(--mobikom-orange); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
@@ -28,6 +29,7 @@
         input[type="text"] { padding: 10px 15px; border: 1px solid #ccd0d5; border-radius: 24px; outline: none; font-size: 14px; }
         .input-msg { flex: 1; min-width: 0; }
         .input-name { width: 85px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
+        .input-code { flex: 1; font-size: 11px; padding: 6px 8px; border-radius: 4px; border: 1px solid #ccc; background: white; }
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 18px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 14px; flex-shrink: 0; }
         button:hover { background: var(--mobikom-orange); }
         .icon-btn { background: #edebe9; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; user-select: none; flex-shrink: 0; }
@@ -48,16 +50,20 @@
 <div class="chat-card">
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
-        <span style="font-size: 11px; background: var(--mobikom-orange); padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
+        <span style="font-size: 11px; background: #ff6600; color: white; padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
     </div>
     
     <div class="setup-area">
-        <div><input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име за чата"></div>
-        <div style="display:flex; gap:4px;">
+        <div class="setup-row">
+            <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име за чата">
             <button class="btn-action" id="audioCallBtn" title="Започване на аудио разговор">📞</button>
             <button class="btn-action" id="videoCallBtn" title="Започване на видео разговор">🎥</button>
             <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията от екрана и RAM паметта">🗑️</button>
             <button class="btn-action" id="inviteBtn" title="Копиране на линка за сигурна P2P връзка">🔗 Покана</button>
+        </div>
+        <div class="setup-row" id="codeRow">
+            <input type="text" id="exchangeCodeField" class="input-code" placeholder="Поставете кода за отговор тук..." autocomplete="off">
+            <button class="btn-action" id="connectBtn">Въведи</button>
         </div>
     </div>
 
@@ -91,8 +97,9 @@
 </div>
 
 <script>
-    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
-    let cryptoKey = null, wsSignaling = null, myId = "", targetId = "", base64KeyString = "", receivedChunks = {}, incomingFileInfo = null, finalInviteUrl = "";
+    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg/chat/";
+    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, base64KeyString = "", finalInviteUrl = "";
+    let receivedChunks = {}, incomingFileInfo = null;
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
@@ -103,12 +110,4 @@
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
         emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
         audioCall: document.getElementById('audioCallBtn'), videoCall: document.getElementById('videoCallBtn'),
-        clearHistory: document.getElementById('clearHistoryBtn'), hangUpCall: document.getElementById('hangUpCallBtn')
-    };
-
-    const urlParams = new URLSearchParams(window.location.search);
-    myId = urlParams.get('android_id') || Math.random().toString(36).substring(2, 10);
-    targetId = urlParams.get('join');
-    const keyHash = window.location.hash.substring(1);
-
-    async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
+        clearHistory: document.getElementById('clearHistoryBtn'), hangUpCall: document.getElementById('hangUpCallBtn'),
