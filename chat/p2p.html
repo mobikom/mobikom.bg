@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mobikom LAN IP Фиксирана Мрежа</title>
+    <title>Mobikom LAN P2P Call</title>
     <style>
         :root { --mobikom-orange: #ff6600; --mobikom-grey: #2e3131; --bg: #f5f7fa; --card: #ffffff; --text: #050505; }
         * { box-sizing: border-box; }
@@ -11,7 +11,7 @@
         .chat-card { width: 100%; max-width: 440px; height: 100%; max-height: 700px; background: var(--card); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; position: relative; border: 2px solid var(--mobikom-grey); }
         @media (max-width: 480px) { .chat-card { max-width: 100%; max-height: 100%; border: none; border-radius: 0; } }
         .chat-header { background: var(--mobikom-grey); color: white; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); flex-shrink: 0; }
-        .brand-title { font-size: 16px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .brand-title { font-size: 15px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
         .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
         .setup-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px; }
@@ -20,54 +20,53 @@
         .me { background: var(--mobikom-orange); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .other { background: #e4e6eb; color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg-sender { font-size: 10px; font-weight: bold; opacity: 0.7; margin-bottom: 3px; }
-        .msg img { max-width: 100%; border-radius: 8px; margin-top: 5px; max-height: 150px; object-fit: cover; }
-        .msg a { color: #0078d4; font-weight: bold; text-decoration: underline; margin-top: 5px; }
-        .me a { color: #fff; }
-        .btn-delete-msg { font-size: 10px; opacity: 0; position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .msg:hover .btn-delete-msg { opacity: 1; }
         .input-container { display: flex; padding: 12px 15px; background: var(--card); border-top: 1px solid #ccd1d9; gap: 8px; align-items: center; flex-shrink: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
         input[type="text"] { padding: 10px 15px; border: 1px solid #ccd0d5; border-radius: 24px; outline: none; font-size: 14px; }
         .input-msg { flex: 1; min-width: 0; }
-        .input-name { width: 85px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
-        
-        /* 📱 Поле за въвеждане на локално IP на другото устройство */
+        .input-name { width: 75px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
         .input-ip { flex: 1; font-size: 13px; padding: 6px 12px; border-radius: 24px; border: 1px solid #ccc; background: white; outline: none; text-align: center; }
-        
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 18px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 14px; flex-shrink: 0; }
         button:hover { background: var(--mobikom-orange); }
         .icon-btn { background: #edebe9; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; user-select: none; flex-shrink: 0; }
         .emoji-panel { display: none; position: absolute; bottom: 65px; left: 15px; right: 15px; background: white; border: 1px solid #ccd0d5; border-radius: 12px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); grid-template-columns: repeat(5, 1fr); gap: 8px; z-index: 10; }
         .emoji-item { text-align: center; font-size: 22px; cursor: pointer; user-select: none; }
-        .btn-action { background: var(--mobikom-grey); font-size: 13px; padding: 6px 18px; border-radius: 24px; font-weight: bold; color: white; border: none; cursor: pointer; }
+        .btn-action { background: var(--mobikom-grey); font-size: 11px; padding: 5px 12px; border-radius: 24px; font-weight: bold; color: white; border: none; cursor: pointer; }
         .btn-action:hover { background: var(--mobikom-orange); }
         .btn-clear { background: #ef4444; border-radius: 50%; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-        .progress-bar { width: 100%; background: #e0e0e0; border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden; display: none; }
-        .progress-fill { height: 100%; background: var(--mobikom-orange); width: 0%; }
+        
+        /* 🎥 Видео контейнер за гласово и видео повикване по IP */
+        .video-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; background: #23272a; position: relative; flex-shrink: 0; }
+        video { width: 100%; height: 110px; border-radius: 8px; background: #000; object-fit: cover; }
+        .btn-hangup { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="chat-card">
     <div class="chat-header">
-        <div class="brand-title"><div class="brand-dot"></div> Mobikom LAN IP</div>
-        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● LAN Режим</span>
+        <div class="brand-title" id="myIpHeader"><div class="brand-dot"></div> LAN IP Мост</div>
+        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● Изчакване</span>
     </div>
     
-    <div class="setup-area">
-        <div class="setup-row" id="setupRowArea">
+    <div class="setup-area" id="signalingArea">
+        <div class="setup-row">
             <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име">
-            <!-- 🟢 Директно въвеждане на LAN IP адреса на отсрещното устройство -->
-            <input type="text" id="targetIpField" class="input-ip" placeholder="IP на отсрещния (напр. 192.168.1.5)" autocomplete="off">
-            <button class="btn-action" id="connectBtn" title="Свързване по локално IP">Свържи</button>
+            <!-- 🟢 Директно поле за избор на IP адреса на устройството, на което искате да ПОЗВЪНИТЕ -->
+            <input type="text" id="targetIpField" class="input-ip" placeholder="Въведете IP на отсрещния..." autocomplete="off">
+            <button class="btn-action" id="audioCallBtn" title="Повикване по IP (Аудио)">📞</button>
+            <button class="btn-action" id="videoCallBtn" title="Повикване по IP (Видео)">🎥</button>
             <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията">🗑️</button>
         </div>
     </div>
 
-    <div class="chat-box" id="chatBox"></div>
-    <div id="globalProgress" style="padding: 0 15px; font-size: 12px; color: #555; display: none;">
-        <span id="progressText">Трансфер: 0%</span>
-        <div class="progress-bar" style="display:block;"><div class="progress-fill" id="progressFill"></div></div>
+    <!-- Контейнер за възпроизвеждане на видеокамерите при активен разговор -->
+    <div class="video-container" id="videoContainer">
+        <video id="localVideo" autoplay muted playsinline></video>
+        <video id="remoteVideo" autoplay playsinline></video>
+        <button class="btn-hangup" id="hangUpCallBtn" title="Прекъсване на повикването">Затвори</button>
     </div>
+
+    <div class="chat-box" id="chatBox"></div>
     
     <div class="emoji-panel" id="emojiPanel">
         <div class="emoji-item" data-emoji="😀">😀</div><div class="emoji-item" data-emoji="😂">😂</div>
@@ -81,23 +80,26 @@
         <input type="file" id="fileInput" style="display: none;">
         <label for="fileInput" class="icon-btn" title="Изпращане на файл (макс. 15 MB)">📎</label>
         <div class="icon-btn" id="emojiToggleBtn" title="Емотикони">😊</div>
-        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва автоматично след свързване">
+        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва след приемане на повикването">
         <button id="sendBtn" disabled title="Изпращане">Прати</button>
     </div>
 </div>
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
-    let rtcPeer = null, dataChannel = null, cryptoKey = null, wsLocalSignaling = null;
-    let receivedChunks = {}, incomingFileInfo = null;
+    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null;
+    let targetIpAddress = "", myIpAddress = "";
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
         msgInput: document.getElementById('messageInput'), nameInput: document.getElementById('usernameField'),
         send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
-        prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
         emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
-        clearHistory: document.getElementById('clearHistoryBtn'), ipField: document.getElementById('targetIpField'), connectBtn: document.getElementById('connectBtn')
+        clearHistory: document.getElementById('clearHistoryBtn'), ipField: document.getElementById('targetIpField'),
+        audioCall: document.getElementById('audioCallBtn'), videoCall: document.getElementById('videoCallBtn'),
+        hangUpCall: document.getElementById('hangUpCallBtn'), vContainer: document.getElementById('videoContainer'),
+        localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
+        myIpHeader: document.getElementById('myIpHeader')
     };
 
     // 🔒 Нативна криптография
@@ -105,14 +107,8 @@
     async function encryptData(d) { if(!cryptoKey) cryptoKey = await generateAESKey(); const iv = window.crypto.getRandomValues(new Uint8Array(12)), enc = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, cryptoKey, new TextEncoder().encode(JSON.stringify(d))); return { ct: btoa(String.fromCharCode(...new Uint8Array(enc))), iv: btoa(String.fromCharCode(...iv)) }; }
     async function decryptData(o) { const iv = new Uint8Array(atob(o.iv).split("").map(c => c.charCodeAt(0))), ct = new Uint8Array(atob(o.ct).split("").map(c => c.charCodeAt(0))); return JSON.parse(new TextDecoder().decode(await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, cryptoKey, ct))); }
 
-    function setupPeerConfiguration() {
-        rtcPeer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:127.0.0.1:3478' }], iceCandidatePoolSize: 10 });
-    }
-
-    async function initSystem() {
-        setupPeerConfiguration();
-        cryptoKey = await generateAESKey();
-    }
-
-    // 🚀 СВЪРЗВАНЕ ПО IP АДРЕС ПРЕЗ ВЪТРЕШНИЯ СТРИЙМ НА РУТЕРА
-    UI.connectBtn.onclick = async function() {
+    // 🌐 Автоматично засичане на локалното IP на вашата LAN карта
+    function discoverMyLocalIp() {
+        const tempPeer = new RTCPeerConnection({ iceServers: [] });
+        tempPeer.createDataChannel("");
+        tempPeer.createOffer().then(offer => tempPeer.setLocalDescription(offer));
