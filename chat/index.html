@@ -13,7 +13,7 @@
         .chat-header { background: var(--mobikom-grey); color: white; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); flex-shrink: 0; }
         .brand-title { font-size: 16px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
-        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-shrink: 0; }
+        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
         .setup-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 10px 14px; border-radius: 14px; max-width: 80%; word-wrap: break-word; font-size: 14px; display: flex; flex-direction: column; position: relative; }
@@ -38,6 +38,12 @@
         .btn-action { background: var(--mobikom-grey); font-size: 11px; padding: 5px 8px; border-radius: 4px; font-weight: bold; color: white; border: none; cursor: pointer; }
         .btn-action:hover { background: var(--mobikom-orange); }
         .btn-clear { background: #ef4444; }
+        
+        /* 📋 Специфичен контейнер за извеждане на резултата */
+        .result-panel { display: none; width: 100%; flex-direction: column; gap: 4px; background: #fff3cd; border: 1px solid #ffeba2; padding: 8px; border-radius: 8px; margin-top: 4px; }
+        .result-panel label { font-size: 11px; font-weight: bold; color: #856404; }
+        .result-textarea { width: 100%; height: 50px; font-size: 10px; font-family: monospace; resize: none; border: 1px solid #ccd0d5; padding: 4px; border-radius: 4px; }
+
         .video-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; background: #23272a; position: relative; flex-shrink: 0; }
         video { width: 100%; height: 110px; border-radius: 8px; background: #000; object-fit: cover; }
         .btn-hangup { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
@@ -50,19 +56,26 @@
 <div class="chat-card">
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
-        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● Готов за връзка</span>
+        <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
     </div>
     
     <div class="setup-area">
         <div class="setup-row">
-            <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето имя за чата">
+            <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име за чата">
             <button class="btn-action" id="audioCallBtn" title="Започване на аудио разговор">📞</button>
             <button class="btn-action" id="videoCallBtn" title="Започване на видео разговор">🎥</button>
             <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията">🗑️</button>
-            <button class="btn-action" id="inviteBtn" title="Копиране на линка за сигурна P2P връзка">🔗 Покана</button>
+            <button class="btn-action" id="inviteBtn" title="Генериране на покана или отговор">🔗 Покана</button>
         </div>
+        
+        <!-- 📋 Видим резултат - Показва линка или кода на екрана -->
+        <div class="result-panel" id="resultPanel">
+            <label id="resultLabel">Код за споделяне:</label>
+            <textarea id="resultTextarea" class="result-textarea" readonly onclick="this.select()" title="Маркирайте и копирайте този код"></textarea>
+        </div>
+
         <div class="setup-row" id="codeRow">
-            <input type="text" id="exchangeCodeField" class="input-code" placeholder="Поставете кода за отговор тук..." autocomplete="off">
+            <input type="text" id="exchangeCodeField" class="input-code" placeholder="Поставете получения код тук..." autocomplete="off">
             <button class="btn-action" id="connectBtn">Въведи</button>
         </div>
     </div>
@@ -98,16 +111,9 @@
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg/chat/";
-    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, base64KeyString = "", finalInviteUrl = "";
+    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null, base64KeyString = "";
     let receivedChunks = {}, incomingFileInfo = null, hashData = "";
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
         msgInput: document.getElementById('messageInput'), nameInput: document.getElementById('usernameField'),
-        send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
-        invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
-        localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
-        prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
-        emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
-        audioCall: document.getElementById('audioCallBtn'), videoCall: document.getElementById('videoCallBtn'),
-        clearHistory: document.getElementById('clearHistoryBtn'), hangUpCall: document.getElementById('hangUpCallBtn'),
