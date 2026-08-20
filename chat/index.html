@@ -4,28 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobikom P2P Фиксирана Мрежа</title>
-    <!-- Използваме стабилния Cloudflare CDN за PeerJS -->
     <script src="https://cloudflare.com" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         :root { --mobikom-orange: #ff6600; --mobikom-grey: #2e3131; --bg: #f5f7fa; --card: #ffffff; --text: #050505; }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .chat-card { width: 420px; height: 650px; background: var(--card); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; position: relative; border: 2px solid var(--mobikom-grey); }
+        .chat-card { width: 420px; height: 650px; background: var(--card); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--mobikom-grey); }
         .chat-header { background: var(--mobikom-grey); color: white; padding: 15px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); }
         .brand-title { font-size: 18px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
-        .setup-area { padding: 12px 20px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .setup-area { padding: 12px 20px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 5px; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 10px 14px; border-radius: 14px; max-width: 75%; word-wrap: break-word; font-size: 14px; display: flex; flex-direction: column; position: relative; }
         .me { background: var(--mobikom-orange); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .other { background: #e4e6eb; color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg-sender { font-size: 10px; font-weight: bold; opacity: 0.7; margin-bottom: 3px; }
         .msg img { max-width: 100%; border-radius: 8px; margin-top: 5px; max-height: 150px; object-fit: cover; }
         .msg a { color: #0078d4; font-weight: bold; text-decoration: underline; margin-top: 5px; }
         .me a { color: #fff; }
         .btn-delete-msg { font-size: 10px; opacity: 0; position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .msg:hover .btn-delete-msg { opacity: 1; }
         .input-container { display: flex; padding: 15px; background: var(--card); border-top: 1px solid #ccd1d9; gap: 8px; align-items: center; }
-        input[type="text"], input[type="password"] { padding: 10px 15px; border: 1px solid #ccd0d5; border-radius: 24px; outline: none; font-size: 14px; }
-        input[type="text"] { flex: 1; }
+        input[type="text"] { padding: 10px 15px; border: 1px solid #ccd0d5; border-radius: 24px; outline: none; font-size: 14px; }
+        .input-msg { flex: 1; }
+        .input-name { width: 80px; border-radius: 6px; padding: 4px 8px; font-size: 12px; }
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 20px; border-radius: 24px; cursor: pointer; font-weight: bold; }
         button:hover { background: var(--mobikom-orange); }
         .icon-btn { background: #edebe9; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; user-select: none; }
@@ -38,30 +39,19 @@
         .btn-hangup { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; border: none; padding: 5px 15px; border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .progress-bar { width: 100%; background: #e0e0e0; border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--mobikom-orange); width: 0%; }
-
-        /* 🔒 Екран за ПИН код - Най-горно CSS ниво */
-        .pin-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--mobikom-grey); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; gap: 15px; }
-        .pin-input { width: 120px; text-align: center; letter-spacing: 5px; font-size: 20px; border-radius: 8px !important; border: 2px solid var(--mobikom-orange) !important; background: #1a1c1c; color: white; }
-        .pin-overlay p { margin: 0; font-size: 14px; font-weight: bold; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
 <div class="chat-card">
-    <div class="pin-overlay" id="pinOverlay">
-        <div class="brand-dot" style="width: 25px; height: 25px;"></div>
-        <p id="pinTitle">ВЪВЕДЕТЕ ПИН КОД ЗА ДОСТЪП</p>
-        <input type="password" id="pinField" class="pin-input" maxlength="4" placeholder="••••" autocomplete="off">
-        <button onclick="checkPIN()">Вход в мрежата</button>
-    </div>
-
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
         <span style="font-size: 11px; background: var(--mobikom-orange); padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
     </div>
     
     <div class="setup-area">
-        <div><strong>Абонат ID:</strong> <span id="my-id" style="color:var(--mobikom-orange); font-weight:bold;">...</span></div>
+        <!-- Поле за избор на име на абоната -->
+        <div><input type="text" id="usernameField" class="input-name" placeholder="Вашето име..." value="Абонат"></div>
         <div style="display:flex; gap:4px;">
             <button class="btn-action" onclick="startCall(false)">📞</button>
             <button class="btn-action" onclick="startCall(true)">📹</button>
@@ -94,30 +84,44 @@
         <input type="file" id="fileInput" style="display: none;" onchange="prepareFileToSend()">
         <label for="fileInput" class="icon-btn">📎</label>
         <div class="icon-btn" onclick="toggleEmojiPanel()">😊</div>
-        <input type="text" id="messageInput" placeholder="Напишете съобщение..." disabled>
+        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled>
         <button id="sendBtn" onclick="sendMessage()" disabled>Прати</button>
     </div>
 </div>
 
 <script>
-    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg/chat/";
+    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
     let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null;
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
-        id: document.getElementById('my-id'), msgInput: document.getElementById('messageInput'),
+        msgInput: document.getElementById('messageInput'), nameInput: document.getElementById('usernameField'),
         send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
         invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
         localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
-        emojiPanel: document.getElementById('emojiPanel'), pinOverlay: document.getElementById('pinOverlay'), pinField: document.getElementById('pinField'), pinTitle: document.getElementById('pinTitle')
+        emojiPanel: document.getElementById('emojiPanel')
     };
 
-    const savedPIN = localStorage.getItem('mobikom_chat_pin');
-    if (!savedPIN) UI.pinTitle.innerText = "СЪЗДАЙТЕ НОВ 4-ЦИФРЕН ПИН КОД";
+    if ("Notification" in window && Notification.permission === "default") Notification.requestPermission();
+    initPeerNetwork();
 
-    function checkPIN() {
-        const inputPIN = UI.pinField.value.trim();
-        if (inputPIN.length !== 4 || isNaN(inputPIN)) { alert("ПИН кодът трябва да съдържа точно 4 цифри!"); return; }
+    function notify(title) {
+        if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+            new Notification(title, { tag: "mobikom-traffic", renotify: true });
+        }
+    }
 
-        if (!savedPIN) {
+    async function initPeerNetwork() {
+        const urlParams = new URLSearchParams(window.location.search), androidId = urlParams.get('android_id'); 
+        if (typeof Peer === 'undefined') { alert("Грешка при зареждане на мрежата!"); return; }
+
+        const target = urlParams.get('join'), keyHash = window.location.hash.substring(1);
+        try { cryptoKey = (target && keyHash) ? await importKeyBase64(keyHash) : await generateAESKey(); } catch(e) { cryptoKey = await generateAESKey(); }
+
+        peer = androidId ? new Peer(androidId, { config: { iceServers: [{ urls: 'stun:://google.com' }] } }) : new Peer({ config: { iceServers: [{ urls: 'stun:://google.com' }] } });
+
+        peer.on('open', (id) => {
+            myPeerId = id; UI.status.innerText = '● Готов'; UI.invite.disabled = false;
+            if (target && keyHash) { UI.status.innerText = 'Дешифриране...'; conn = peer.connect(target); setupChat(); }
+        });
