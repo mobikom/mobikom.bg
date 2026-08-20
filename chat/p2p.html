@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mobikom LAN Фиксирана Мрежа</title>
+    <title>Mobikom LAN IP Фиксирана Мрежа</title>
     <style>
         :root { --mobikom-orange: #ff6600; --mobikom-grey: #2e3131; --bg: #f5f7fa; --card: #ffffff; --text: #050505; }
         * { box-sizing: border-box; }
@@ -30,12 +30,15 @@
         .input-msg { flex: 1; min-width: 0; }
         .input-name { width: 85px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
         
+        /* 📱 Поле за въвеждане на локално IP на другото устройство */
+        .input-ip { flex: 1; font-size: 13px; padding: 6px 12px; border-radius: 24px; border: 1px solid #ccc; background: white; outline: none; text-align: center; }
+        
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 18px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 14px; flex-shrink: 0; }
         button:hover { background: var(--mobikom-orange); }
         .icon-btn { background: #edebe9; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; user-select: none; flex-shrink: 0; }
         .emoji-panel { display: none; position: absolute; bottom: 65px; left: 15px; right: 15px; background: white; border: 1px solid #ccd0d5; border-radius: 12px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); grid-template-columns: repeat(5, 1fr); gap: 8px; z-index: 10; }
         .emoji-item { text-align: center; font-size: 22px; cursor: pointer; user-select: none; }
-        .btn-action { background: var(--mobikom-grey); font-size: 13px; padding: 6px 20px; border-radius: 24px; font-weight: bold; color: white; border: none; cursor: pointer; }
+        .btn-action { background: var(--mobikom-grey); font-size: 13px; padding: 6px 18px; border-radius: 24px; font-weight: bold; color: white; border: none; cursor: pointer; }
         .btn-action:hover { background: var(--mobikom-orange); }
         .btn-clear { background: #ef4444; border-radius: 50%; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
         .progress-bar { width: 100%; background: #e0e0e0; border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden; display: none; }
@@ -46,15 +49,16 @@
 
 <div class="chat-card">
     <div class="chat-header">
-        <div class="brand-title"><div class="brand-dot"></div> Mobikom LAN Fixed</div>
+        <div class="brand-title"><div class="brand-dot"></div> Mobikom LAN IP</div>
         <span style="font-size: 11px; background: #107c41; color: white; padding: 3px 8px; border-radius: 10px;" id="status">● LAN Режим</span>
     </div>
     
     <div class="setup-area">
-        <!-- 🟢 Кодовете са премахнати, оставен е само чистият бутон Свържи -->
-        <div class="setup-row">
+        <div class="setup-row" id="setupRowArea">
             <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име">
-            <button class="btn-action" id="connectBtn" style="flex: 1;" title="Стартиране на инстантна локална P2P връзка">Свържи</button>
+            <!-- 🟢 Директно въвеждане на LAN IP адреса на отсрещното устройство -->
+            <input type="text" id="targetIpField" class="input-ip" placeholder="IP на отсрещния (напр. 192.168.1.5)" autocomplete="off">
+            <button class="btn-action" id="connectBtn" title="Свързване по локално IP">Свържи</button>
             <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията">🗑️</button>
         </div>
     </div>
@@ -84,7 +88,7 @@
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
-    let rtcPeer = null, dataChannel = null, cryptoKey = null;
+    let rtcPeer = null, dataChannel = null, cryptoKey = null, wsLocalSignaling = null;
     let receivedChunks = {}, incomingFileInfo = null;
 
     const UI = {
@@ -93,7 +97,7 @@
         send: document.getElementById('sendBtn'), file: document.getElementById('fileInput'),
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
         emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
-        clearHistory: document.getElementById('clearHistoryBtn'), connectBtn: document.getElementById('connectBtn')
+        clearHistory: document.getElementById('clearHistoryBtn'), ipField: document.getElementById('targetIpField'), connectBtn: document.getElementById('connectBtn')
     };
 
     // 🔒 Нативна криптография
@@ -108,18 +112,7 @@
     async function initSystem() {
         setupPeerConfiguration();
         cryptoKey = await generateAESKey();
-        
-        dataChannel = rtcPeer.createDataChannel("mobikom-fixed-pipe", { ordered: true });
-        handleDataChannel(dataChannel);
-        
-        rtcPeer.createOffer().then(offer => rtcPeer.setLocalDescription(offer)).catch(()=>{});
-        
-        rtcPeer.ondatachannel = (e) => {
-            dataChannel = e.channel;
-            handleDataChannel(dataChannel);
-        };
     }
 
-    // 🚀 АВТОМАТИЧНО МИГНОВЕНО СВЪРЗВАНЕ С ЕДНО КЛИКВАНЕ
+    // 🚀 СВЪРЗВАНЕ ПО IP АДРЕС ПРЕЗ ВЪТРЕШНИЯ СТРИЙМ НА РУТЕРА
     UI.connectBtn.onclick = async function() {
-        UI.connectBtn.innerText = "Търсене...";
