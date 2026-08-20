@@ -29,7 +29,7 @@
         input[type="text"] { padding: 10px 15px; border: 1px solid #ccd0d5; border-radius: 24px; outline: none; font-size: 14px; }
         .input-msg { flex: 1; min-width: 0; }
         .input-name { width: 85px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
-        .input-code { flex: 1; font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; }
+        .input-code { flex: 1; font-size: 11px; padding: 6px 8px; border-radius: 4px; border: 1px solid #ccc; background: white; }
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 18px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 14px; flex-shrink: 0; }
         button:hover { background: var(--mobikom-orange); }
         .icon-btn { background: #edebe9; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; user-select: none; flex-shrink: 0; }
@@ -50,7 +50,7 @@
 <div class="chat-card">
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
-        <span style="font-size: 11px; background: var(--mobikom-orange); padding: 3px 8px; border-radius: 10px;" id="status">Локален режим</span>
+        <span style="font-size: 11px; background: var(--mobikom-orange); padding: 3px 8px; border-radius: 10px;" id="status">Ръчен P2P режим</span>
     </div>
     
     <div class="setup-area">
@@ -59,10 +59,10 @@
             <button class="btn-action" onclick="startCall(false)">📞</button>
             <button class="btn-action" onclick="startCall(true)">📹</button>
             <button class="btn-action btn-clear" onclick="clearLocalHistory()">🗑️</button>
-            <button class="btn-action" id="inviteBtn" onclick="initiateConnection()">🔗 Създай покана</button>
+            <button class="btn-action" id="inviteBtn" onclick="initiateConnection()">🔗 Покана</button>
         </div>
         <div class="setup-row" id="codeRow">
-            <input type="text" id="exchangeCodeField" class="input-code" placeholder="Поставете код за отговор/покана тук..." autocomplete="off">
+            <input type="text" id="exchangeCodeField" class="input-code" placeholder="Поставете генерирания код тук..." autocomplete="off">
             <button class="btn-action" id="connectBtn" onclick="processExchangeCode()">Въведи</button>
         </div>
     </div>
@@ -98,7 +98,7 @@
 
 <script>
     const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
-    let rtcPeer = null, dataChannel = null, localStream = null, currentCall = null, cryptoKey = null;
+    let rtcPeer = null, dataChannel = null, localStream = null, cryptoKey = null;
     let receivedChunks = {}, incomingFileInfo = null, base64KeyString = "";
 
     const UI = {
@@ -111,5 +111,6 @@
         emojiPanel: document.getElementById('emojiPanel'), codeField: document.getElementById('exchangeCodeField'), connectBtn: document.getElementById('connectBtn')
     };
 
-    // 🔑 1. Криптографски операции през Нативния Web Crypto API
+    // 🔒 1. Сигурна криптография (Нативен Web Crypto API)
     async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
+    async function exportKeyBase64(key) { return btoa(String.fromCharCode(...new Uint8Array(await window.crypto.subtle.exportKey("raw", key)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
