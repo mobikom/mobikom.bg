@@ -15,11 +15,11 @@
         .setup-area { padding: 12px 20px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 10px 14px; border-radius: 14px; max-width: 75%; word-wrap: break-word; font-size: 14px; display: flex; flex-direction: column; position: relative; }
-        .msg.me { background: var(--mobikom-orange); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .msg.other { background: #e4e6eb; color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .me { background: var(--mobikom-orange); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .other { background: #e4e6eb; color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg img { max-width: 100%; border-radius: 8px; margin-top: 5px; max-height: 150px; object-fit: cover; }
         .msg a { color: #0078d4; font-weight: bold; text-decoration: underline; margin-top: 5px; }
-        .msg.me a { color: #fff; }
+        .me a { color: #fff; }
         .btn-delete-msg { font-size: 10px; opacity: 0; position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .msg:hover .btn-delete-msg { opacity: 1; }
         .input-container { display: flex; padding: 15px; background: var(--card); border-top: 1px solid #ccd1d9; gap: 8px; align-items: center; }
@@ -37,7 +37,6 @@
         .btn-hangup { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; border: none; padding: 5px 15px; border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .progress-bar { width: 100%; background: #e0e0e0; border-radius: 4px; height: 6px; margin-top: 5px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--mobikom-orange); width: 0%; }
-
         .pin-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--mobikom-grey); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; gap: 15px; }
         .pin-input { width: 120px; text-align: center; letter-spacing: 5px; font-size: 20px; border-radius: 8px !important; border: 2px solid var(--mobikom-orange) !important; background: #1a1c1c; color: white; }
         .pin-overlay p { margin: 0; font-size: 14px; font-weight: bold; letter-spacing: 0.5px; }
@@ -98,10 +97,8 @@
 </div>
 
 <script>
-    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
-    const OFFICIAL_BASE_URL = "https://mobikom.bg";
-
-    let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null;
+    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
+    let conn = null, myPeerId = null, currentCall = null, localStream = null, cryptoKey = null, peer = null, receivedChunks = {}, incomingFileInfo = null;
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
@@ -110,18 +107,17 @@
         invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
         localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
-        emojiPanel: document.getElementById('emojiPanel'),
-        pinOverlay: document.getElementById('pinOverlay'), pinField: document.getElementById('pinField'), pinTitle: document.getElementById('pinTitle')
+        emojiPanel: document.getElementById('emojiPanel'), pinOverlay: document.getElementById('pinOverlay'), pinField: document.getElementById('pinField'), pinTitle: document.getElementById('pinTitle')
     };
 
     const savedPIN = localStorage.getItem('mobikom_chat_pin');
     if (!savedPIN) UI.pinTitle.innerText = "СЪЗДАЙТЕ НОВ 4-ЦИФРЕН ПИН КОД";
 
-    // 🔒 Искане на права за системни известия при отключване на приложението
     function checkPIN() {
         const inputPIN = UI.pinField.value.trim();
         if (inputPIN.length !== 4 || isNaN(inputPIN)) { alert("ПИН кодът трябва да съдържа точно 4 цифри!"); return; }
 
-        if (!savedPIN) {
-            localStorage.setItem('mobikom_chat_pin', inputPIN);
-            UI.pinOverlay.style.display = 'none';
+        if (!savedPIN) localStorage.setItem('mobikom_chat_pin', inputPIN);
+        else if (inputPIN !== savedPIN) { alert("Грешен ПИН код!"); UI.pinField.value = ""; return; }
+
+        UI.pinOverlay.style.display = 'none';
