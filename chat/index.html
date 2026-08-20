@@ -8,12 +8,13 @@
         :root { --mobikom-orange: #ff6600; --mobikom-grey: #2e3131; --bg: #f5f7fa; --card: #ffffff; --text: #050505; }
         * { box-sizing: border-box; }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; height: 100vh; height: -webkit-fill-available; }
-        .chat-card { width: 100%; max-width: 440px; height: 100%; max-height: 700px; background: var(--card); display: flex; flex-direction: column; overflow: hidden; position: relative; border: 2px solid var(--mobikom-grey); }
+        .chat-card { width: 100%; max-width: 440px; height: 100%; max-height: 700px; background: var(--card); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; position: relative; border: 2px solid var(--mobikom-grey); }
         @media (max-width: 480px) { .chat-card { max-width: 100%; max-height: 100%; border: none; border-radius: 0; } }
         .chat-header { background: var(--mobikom-grey); color: white; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--mobikom-orange); flex-shrink: 0; }
         .brand-title { font-size: 16px; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .brand-dot { width: 10px; height: 10px; background: var(--mobikom-orange); border-radius: 50%; }
-        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-shrink: 0; }
+        .setup-area { padding: 10px 15px; background: #eef1f5; border-bottom: 1px solid #ccd1d9; font-size: 13px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .setup-row { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px; }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 12px; }
         .msg { padding: 10px 14px; border-radius: 14px; max-width: 80%; word-wrap: break-word; font-size: 14px; display: flex; flex-direction: column; position: relative; }
         .me { background: var(--mobikom-orange); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
@@ -28,12 +29,14 @@
         input[type="text"] { padding: 10px 15px; border: 1px solid #ccd0d5; border-radius: 24px; outline: none; font-size: 14px; }
         .input-msg { flex: 1; min-width: 0; }
         .input-name { width: 85px; border-radius: 6px; padding: 4px 6px; font-size: 12px; }
+        .input-code { flex: 1; font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; }
         button { background: var(--mobikom-grey); color: white; border: none; padding: 10px 18px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 14px; flex-shrink: 0; }
         button:hover { background: var(--mobikom-orange); }
         .icon-btn { background: #edebe9; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; user-select: none; flex-shrink: 0; }
         .emoji-panel { display: none; position: absolute; bottom: 65px; left: 15px; right: 15px; background: white; border: 1px solid #ccd0d5; border-radius: 12px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); grid-template-columns: repeat(5, 1fr); gap: 8px; z-index: 10; }
         .emoji-item { text-align: center; font-size: 22px; cursor: pointer; user-select: none; }
-        .btn-action { background: var(--mobikom-grey); font-size: 11px; padding: 5px 8px; border-radius: 4px; font-weight: bold; color: white; }
+        .btn-action { background: var(--mobikom-grey); font-size: 11px; padding: 5px 8px; border-radius: 4px; font-weight: bold; color: white; border: none; cursor: pointer; }
+        .btn-action:hover { background: var(--mobikom-orange); }
         .btn-clear { background: #ef4444; }
         .video-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; background: #23272a; position: relative; flex-shrink: 0; }
         video { width: 100%; height: 110px; border-radius: 8px; background: #000; object-fit: cover; }
@@ -47,16 +50,20 @@
 <div class="chat-card">
     <div class="chat-header">
         <div class="brand-title"><div class="brand-dot"></div> Mobikom P2P</div>
-        <span style="font-size: 11px; background: var(--mobikom-orange); padding: 3px 8px; border-radius: 10px;" id="status">Зареждане...</span>
+        <span style="font-size: 11px; background: var(--mobikom-orange); padding: 3px 8px; border-radius: 10px;" id="status">Локален режим</span>
     </div>
     
     <div class="setup-area">
-        <div><input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат"></div>
-        <div style="display:flex; gap:4px;">
+        <div class="setup-row">
+            <input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат">
             <button class="btn-action" onclick="startCall(false)">📞</button>
             <button class="btn-action" onclick="startCall(true)">📹</button>
             <button class="btn-action btn-clear" onclick="clearLocalHistory()">🗑️</button>
-            <button class="btn-action" id="inviteBtn" onclick="copyInviteLink()" disabled>🔗 Покана</button>
+            <button class="btn-action" id="inviteBtn" onclick="initiateConnection()">🔗 Създай покана</button>
+        </div>
+        <div class="setup-row" id="codeRow">
+            <input type="text" id="exchangeCodeField" class="input-code" placeholder="Поставете код за отговор/покана тук..." autocomplete="off">
+            <button class="btn-action" id="connectBtn" onclick="processExchangeCode()">Въведи</button>
         </div>
     </div>
 
@@ -90,9 +97,9 @@
 </div>
 
 <script>
-    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384, OFFICIAL_BASE_URL = "https://mobikom.bg";
-    let rtcPeer = null, dataChannel = null, localStream = null, currentCall = null, cryptoKey = null, wsSignaling = null;
-    let myId = "", targetId = "", base64KeyString = "", receivedChunks = {}, incomingFileInfo = null;
+    const MAX_FILE_SIZE = 15 * 1024 * 1024, CHUNK_SIZE = 16384;
+    let rtcPeer = null, dataChannel = null, localStream = null, currentCall = null, cryptoKey = null;
+    let receivedChunks = {}, incomingFileInfo = null, base64KeyString = "";
 
     const UI = {
         box: document.getElementById('chatBox'), status: document.getElementById('status'),
@@ -101,15 +108,8 @@
         invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
         localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
-        emojiPanel: document.getElementById('emojiPanel')
+        emojiPanel: document.getElementById('emojiPanel'), codeField: document.getElementById('exchangeCodeField'), connectBtn: document.getElementById('connectBtn')
     };
 
-    const urlParams = new URLSearchParams(window.location.search);
-    myId = urlParams.get('android_id') || Math.random().toString(36).substring(2, 10);
-    targetId = urlParams.get('join');
-    const keyHash = window.location.hash.substring(1);
-
-    // 🔒 1. Абсолютно чист Web Crypto API
+    // 🔑 1. Криптографски операции през Нативния Web Crypto API
     async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
-    async function exportKeyBase64(key) { return btoa(String.fromCharCode(...new Uint8Array(await window.crypto.subtle.exportKey("raw", key)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-    async function importKeyBase64(s) { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/')), bytes = new Uint8Array(b.length).map((_, i) => b.charCodeAt(i)); return await window.crypto.subtle.importKey("raw", bytes, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]); }
