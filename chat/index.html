@@ -52,19 +52,20 @@
     </div>
     
     <div class="setup-area">
-        <div><input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат"></div>
+        <div><input type="text" id="usernameField" class="input-name" placeholder="Име..." value="Абонат" title="Въведете вашето име за чата"></div>
         <div style="display:flex; gap:4px;">
-            <button class="btn-action" onclick="startCall(false)">📞</button>
-            <button class="btn-action" onclick="startCall(true)">📹</button>
-            <button class="btn-action btn-clear" onclick="clearLocalHistory()">🗑️</button>
-            <button class="btn-action" id="inviteBtn" onclick="copyInviteLink()" disabled>🔗 Покана</button>
+            <button class="btn-action" id="audioCallBtn" title="Започване на аудио разговор">📞</button>
+            <button class="btn-action" id="videoCallBtn" title="Започване на видео разговор">🎥</button>
+            <button class="btn-action btn-clear" id="clearHistoryBtn" title="Изчистване на хронологията от екрана и RAM паметта">🗑️</button>
+            <!-- 🔥 Бутонът за покана вече се управлява изцяло от чисти JavaScript слушатели -->
+            <button class="btn-action" id="inviteBtn" disabled title="Копиране на линка за сигурна P2P връзка">🔗 Покана</button>
         </div>
     </div>
 
     <div class="video-container" id="videoContainer">
         <video id="localVideo" autoplay muted playsinline></video>
         <video id="remoteVideo" autoplay playsinline></video>
-        <button class="btn-hangup" onclick="hangUp()">Затвори</button>
+        <button class="btn-hangup" id="hangUpCallBtn" title="Прекъсване на текущото повикване">Затвори</button>
     </div>
 
     <div class="chat-box" id="chatBox"></div>
@@ -74,19 +75,19 @@
     </div>
     
     <div class="emoji-panel" id="emojiPanel">
-        <div class="emoji-item" onclick="insertEmoji('😀')">😀</div><div class="emoji-item" onclick="insertEmoji('😂')">😂</div>
-        <div class="emoji-item" onclick="insertEmoji('😊')">😊</div><div class="emoji-item" onclick="insertEmoji('👍')">👍</div>
-        <div class="emoji-item" onclick="insertEmoji('❤️')">❤️</div><div class="emoji-item" onclick="insertEmoji('🔥')">🔥</div>
-        <div class="emoji-item" onclick="insertEmoji('🎉')">🎉</div><div class="emoji-item" onclick="insertEmoji('🚀')">🚀</div>
-        <div class="emoji-item" onclick="insertEmoji('🤔')">🤔</div><div class="emoji-item" onclick="insertEmoji('😉')">😉</div>
+        <div class="emoji-item" data-emoji="😀">😀</div><div class="emoji-item" data-emoji="😂">😂</div>
+        <div class="emoji-item" data-emoji="😊">😊</div><div class="emoji-item" data-emoji="👍">👍</div>
+        <div class="emoji-item" data-emoji="❤️">❤️</div><div class="emoji-item" data-emoji="🔥">🔥</div>
+        <div class="emoji-item" data-emoji="🎉">🎉</div><div class="emoji-item" data-emoji="🚀">🚀</div>
+        <div class="emoji-item" data-emoji="🤔">🤔</div><div class="emoji-item" data-emoji="😉">😉</div>
     </div>
     
     <div class="input-container">
-        <input type="file" id="fileInput" style="display: none;" onchange="prepareFileToSend()">
-        <label for="fileInput" class="icon-btn">📎</label>
-        <div class="icon-btn" onclick="toggleEmojiPanel()">😊</div>
-        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled>
-        <button id="sendBtn" onclick="sendMessage()" disabled>Прати</button>
+        <input type="file" id="fileInput" style="display: none;">
+        <label for="fileInput" class="icon-btn" title="Прикачване и изпращане на файл (макс. 15 MB)">📎</label>
+        <div class="icon-btn" id="emojiToggleBtn" title="Оваряне на панела с емотикони">😊</div>
+        <input type="text" id="messageInput" class="input-msg" placeholder="Напишете съобщение..." disabled title="Полето се отключва автоматично след свързване">
+        <button id="sendBtn" disabled title="Изпращане на съобщението">Прати</button>
     </div>
 </div>
 
@@ -102,7 +103,9 @@
         invite: document.getElementById('inviteBtn'), vContainer: document.getElementById('videoContainer'),
         localVid: document.getElementById('localVideo'), remoteVid: document.getElementById('remoteVideo'),
         prog: document.getElementById('globalProgress'), progFill: document.getElementById('progressFill'), progText: document.getElementById('progressText'),
-        emojiPanel: document.getElementById('emojiPanel')
+        emojiPanel: document.getElementById('emojiPanel'), emojiToggle: document.getElementById('emojiToggleBtn'),
+        audioCall: document.getElementById('audioCallBtn'), videoCall: document.getElementById('videoCallBtn'),
+        clearHistory: document.getElementById('clearHistoryBtn'), hangUpCall: document.getElementById('hangUpCallBtn')
     };
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -110,6 +113,4 @@
     targetId = urlParams.get('join');
     const keyHash = window.location.hash.substring(1);
 
-    // 🔒 1. Сигурна криптография (Нативен Web Crypto API)
-    async function generateAESKey() { return await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]); }
-    async function exportKeyBase64(key) { return btoa(String.fromCharCode(...new Uint8Array(await window.crypto.subtle.exportKey("raw", key)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    // 🔒 Нативна криптография
